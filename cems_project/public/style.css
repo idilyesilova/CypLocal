@@ -1,0 +1,412 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background-color: #F8F9FB;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logo-wrapper { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 30px; }
+.app-logo { width: 50px; height: 50px; object-fit: contain; }
+.app-title { color: #6C94DC; font-size: 36px; font-weight: 700; }
+
+.login-card {
+    background: white;
+    padding: 40px;
+    border-radius: 45px;
+    box-shadow: 0 15px 40px rgba(108, 148, 220, 0.08);
+    width: 100%;
+    text-align: center;
+}
+
+.form-title { font-size: 26px; font-weight: 700; color: #1A202C; margin-bottom: 8px; }
+.welcome-msg { color: #A0AEC0; font-size: 14px; margin-bottom: 30px; }
+
+.input-field { text-align: left; margin-bottom: 20px; }
+.input-field label { display: block; color: #6C94DC; font-weight: 600; font-size: 13px; margin-bottom: 8px; }
+
+input {
+    width: 100%; 
+    padding: 15px; 
+    border: 1.5px solid #F1F4F9; 
+    border-radius: 18px; 
+    font-size: 14px; 
+    outline: none;
+    background: white;
+}
+
+/* Şifre ve Telefon Konteynırları */
+.pass-input-container, .phone-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.eye-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    z-index: 10;
+    opacity: 0.6;
+    transition: all 0.2s ease;
+}
+.eye-toggle:hover { color: #6C94DC; transform: scale(1.1); 
+    opacity: 1;
+    transform: translateY(-50%) scale(1.1); /* Hafif büyüme efekti */
+}
+
+/* Uluslararası Telefon Stili */
+.iti { width: 100%; }
+.iti input { padding-left: 52px !important; }
+
+/* Butonlar */
+.main-login-btn {
+    width: 100%; padding: 18px; background-color: #6C94DC; color: white;
+    border: none; border-radius: 20px; font-weight: 700; font-size: 16px; cursor: pointer; margin-top: 10px;
+}
+
+.divider-section { display: flex; align-items: center; margin: 25px 0; }
+.line { flex: 1; height: 1.5px; background: #EDF2F7; }
+.divider-text { margin: 0 15px; color: #A0AEC0; font-size: 12px; font-weight: 600; }
+
+.social-login {
+    width: 100%; padding: 14px; background: white; border: 1.5px solid #EDF2F7;
+    border-radius: 20px; display: flex; align-items: center; justify-content: center; gap: 12px;
+    font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 12px;
+    transition: background 0.2s;
+}
+.social-login:hover { background-color: #F8F9FB; }
+.social-login img, .social-login i { width: 20px; font-size: 20px; }
+
+.login-meta { display: flex; justify-content: space-between; align-items: center; margin: 20px 0; font-size: 12px; }
+.custom-checkbox { display: flex; align-items: center; gap: 8px; color: #2D3748; cursor: pointer; }
+.forgot-btn { color: #6C94DC; text-decoration: none; font-weight: 600; }
+.register-link { margin-top: 25px; font-size: 14px; color: #A0AEC0; }
+.register-link a { color: #6C94DC; font-weight: 700; text-decoration: none; }
+
+
+.iti { 
+    width: 100%; 
+    display: block; 
+}
+
+.iti input {
+    /* Buradaki padding-left değeri bayrak ve kodun genişliğine göre ayarlandı */
+    padding-left: 115px !important; 
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin: 0 !important;
+}
+
+/* --- Mevcut Koda Eklenen My Events ve Silme Butonu Stilleri --- */
+
+/* My Events Sayfa Konteynırı */
+#myEventsPage {
+    width: 100%;
+    padding: 10px 20px;
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+/* My Events Başlığı */
+#myEventsPage h2 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1A202C;
+    margin-bottom: 25px;
+    letter-spacing: -0.5px;
+}
+
+/* Liste Öğesi (Kart) Yapısı */
+.event-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #FFFFFF;
+    padding: 16px;
+    border-radius: 25px;
+    margin-bottom: 15px;
+    border: 1px solid #F1F4F9;
+    box-shadow: 0 4px 15px rgba(108, 148, 220, 0.05);
+    transition: all 0.3s ease;
+}
+
+.event-list-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(108, 148, 220, 0.1);
+}
+
+/* Kart İçindeki Resim ve Bilgi Alanı */
+.event-list-item .info-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+    cursor: pointer;
+}
+
+.event-list-item .thumb {
+    width: 60px;
+    height: 60px;
+    border-radius: 18px;
+    object-fit: cover;
+}
+
+.event-list-item .info h5 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #2D3748;
+    margin-bottom: 4px;
+}
+
+.event-list-item .info span {
+    font-size: 12px;
+    color: #A0AEC0;
+    display: block;
+    line-height: 1.4;
+}
+
+/* Silme Butonu (Çöp Kutusu) Stili */
+.delete-btn {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #E53E3E; /* Kırmızı renk */
+    background: #FFF5F5;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: 10px;
+}
+
+.delete-btn:hover {
+    background: #292020;
+    color: white;
+    transform: scale(1.1);
+}
+
+.delete-btn i {
+    font-size: 18px;
+}
+
+/* Boş Durum Mesajı Stili */
+#emptyState {
+    text-align: center;
+    padding: 50px 20px;
+}
+
+#emptyState i {
+    font-size: 50px;
+    color: #EDF2F7;
+    margin-bottom: 15px;
+}
+
+#emptyState p {
+    color: #A0AEC0;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Karartılmış arka plan katmanı */
+#workshopBookingOverlay {
+    display: none; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100vw; 
+    height: 100vh; 
+    background: rgba(0,0,0,0.85); 
+    z-index: 999999; /* En üstte durmasını sağlar */
+}
+
+/* Tam merkezlenmiş kayıt kartı */
+#workshopBookingOverlay .detail-mobile-wrapper {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important; /* Ekranın tam ortasına matematiksel olarak sabitler */
+    width: 90%;
+    max-width: 400px;
+    height: 85vh;
+    background: white;
+    border-radius: 30px;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+}
+
+/* Mavi butonların çalışması için */
+.filter-chip.active, .ws-date-btn.active {
+    background: #6C94DC !important;
+    color: white !important;
+    border-color: #6C94DC !important;
+}
+
+.nav-bar {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%); /* Yatayda tam ortalar */
+    width: 100%;
+    max-width: 430px;
+    height: 80px;
+    background: #FFFFFF;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid #F1F5F9;
+    z-index: 9999; /* Her zaman en üstte durur */
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+}
+
+
+/* --- Profile Sayfası İçin Eklenen Özel Stiller --- */
+
+/* Profil Sayfası Ana Konteynırı */
+#profilePage {
+    display: none; /* JS ile açılacak */
+    width: 100%;
+    min-height: 100vh;
+    background-color: #FFFFFF !important;
+    padding-bottom: 120px;
+}
+
+/* İstatistik Kartı (Followed, Bookmarks, Upcoming) */
+.stats-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background: #F8FAFC;
+    padding: 20px;
+    border-radius: 25px;
+    margin: 0 20px 25px 20px; /* Kenarlardan boşluk bırakır */
+    border: 1px solid #F1F5F9;
+}
+
+.stat-item {
+    text-align: center;
+    flex: 1;
+}
+
+/* Profil Menü Grupları (Mavi ve Açık Mavi Kutular) */
+.profile-menu {
+    padding: 0 20px;
+}
+
+.menu-group {
+    border-radius: 25px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    text-align: left;
+}
+
+/* Mavi Menü Öğeleri (Settings, Account) */
+.menu-group.primary {
+    background: #6C94DC;
+}
+
+.menu-group.primary .menu-item {
+    padding: 18px 25px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    cursor: pointer;
+}
+
+/* Açık Mavi Menü Öğeleri (Privacy, Help) */
+.menu-group.secondary {
+    background: #EBF4FF;
+}
+
+.menu-group.secondary .menu-item {
+    padding: 18px 25px;
+    color: #6C94DC;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 1px solid rgba(108, 148, 220, 0.1);
+    cursor: pointer;
+}
+
+.menu-item:last-child {
+    border-bottom: none;
+}
+
+/* Logout Butonu */
+.logout-btn {
+    width: calc(100% - 40px);
+    margin: 10px 20px;
+    padding: 15px;
+    background: #FFF5F5;
+    color: #E53E3E;
+    border: none;
+    border-radius: 20px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.logout-btn:hover {
+    background: #FED7D7;
+}
+
+/* --- Genel Düzeltmeler --- */
+
+/* Tüm ana sayfaların (Explore, My Events, Profile) ortak yapısı */
+#exploreContent, #myEventsPage, #profilePage {
+    min-height: 100vh;
+    padding-bottom: 100px; /* Nav-bar'ın üstünü kapatmaması için */
+}
+
+/* Geçiş efekti */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Profil sayfasının görünürlüğünü garanti altına al */
+#profilePage {
+    display: none; /* Başlangıçta gizli */
+    background-color: #FFFFFF !important;
+    position: relative;
+    z-index: 5;
+    min-height: 100vh;
+}
+
+.profile-container {
+    min-height: calc(100vh - 160px); /* Nav-bar ve Header payı */
+}
+
+.mobile-container {
+    width: 100%;
+    max-width: 430px;
+    background: #FFFFFF;
+    min-height: 100vh;
+    position: relative;
+    margin: 0 auto; /* Sayfayı ortalar */
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+}

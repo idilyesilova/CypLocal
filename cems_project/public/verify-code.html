@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CypLocal - Verify Code</title>
+
+    <link rel="stylesheet" href="/style.css">
+
+    <style>
+
+        .otp-wrapper {
+
+            display: flex;
+
+            justify-content: center;
+
+            gap: 10px;
+
+            margin: 30px 0;
+
+        }
+
+        .otp-box {
+
+            width: 45px;
+
+            height: 55px;
+
+            text-align: center;
+
+            font-size: 24px;
+
+            font-weight: bold;
+
+            border: 1.5px solid #F1F4F9;
+
+            border-radius: 12px;
+
+            background: #F8F9FB;
+
+            /* style.css'deki padding-left: 95px'i burada iptal ediyoruz */
+
+            padding: 0 !important; 
+
+            margin: 0 !important;
+
+            outline: none;
+
+        }
+
+        .otp-box:focus { border-color: #6C94DC; background: white; }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <div class="logo-wrapper">
+
+            <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcT6KsGroKIO9107QKsoB5QwITbG9jXRg-oJX_EB1nD-eIEkmuWA" class="app-logo">
+
+            <h1 class="app-title">CypLocal</h1>
+
+        </div>
+
+        <div class="login-card" style="position: relative; z-index: 10;">
+
+            <h2 class="form-title">Reset Password</h2>
+
+            <p class="welcome-msg">Please enter the 6-digit code.</p>
+
+            <div class="otp-wrapper">
+
+                <input type="text" class="otp-box" maxlength="1">
+
+                <input type="text" class="otp-box" maxlength="1">
+
+                <input type="text" class="otp-box" maxlength="1">
+
+                <input type="text" class="otp-box" maxlength="1">
+
+                <input type="text" class="otp-box" maxlength="1">
+
+                <input type="text" class="otp-box" maxlength="1">
+
+            </div>
+
+            <button class="main-login-btn" onclick="handleVerifyOTP()">Verify Code</button>
+
+            <div style="margin-top: 30px; text-align: center;">
+
+                Back to <a href="/index.html" style="color: #6C94DC; font-weight: bold; text-decoration: none;">Login</a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        const boxes = document.querySelectorAll('.otp-box');
+        boxes.forEach((box, index) => {
+            box.addEventListener('input', () => {
+                if (box.value.length === 1 && index < 5) boxes[index + 1].focus();
+            });
+        });
+
+async function handleVerifyOTP() {
+    let inputCode = "";
+    // Collect values from the 6 OTP boxes
+    document.querySelectorAll('.otp-box').forEach(box => inputCode += box.value);
+    
+    const targetEmail = localStorage.getItem('resetTargetEmail');
+
+    if (inputCode.length < 6) {
+        alert("Please enter the full 6-digit code.");
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/verify-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: targetEmail, code: inputCode })
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+            window.location.href = "/new-password.html";
+        } else {
+            alert(result.message);
+        }
+    } catch (error) {
+        alert("Verification failed.");
+    }
+}
+
+
+    </script>
+
+</body>
+
+</html>
+
+
+

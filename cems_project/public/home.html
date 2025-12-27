@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CypLocal - Explore</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+    <style>
+        /* Global Reset */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background: #FFFFFF; display: flex; justify-content: center; min-height: 100vh; }
+
+        .mobile-container {
+            width: 100%;
+            max-width: 430px; 
+            background: #fff;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 90px;
+            overflow-x: hidden;
+        }
+
+        /* Top Header */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px 5px; }
+        .logo-area { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 24px; color: #4A5568; }
+
+        /* Category Navigation Pills */
+        .categories { display: flex; gap: 10px; overflow-x: auto; padding: 15px 20px; scrollbar-width: none; }
+        .categories::-webkit-scrollbar { display: none; }
+        .chip { padding: 8px 16px; background: #EDF2F7; border-radius: 20px; font-size: 11px; font-weight: 700; color: #A0AEC0; white-space: nowrap; cursor: pointer; transition: 0.3s; }
+        .chip.active { background: #6C94DC; color: white; }
+
+        /* Sort and Filter Control Bar */
+        .filter-section { display: flex; justify-content: space-between; padding: 5px 20px 15px; position: relative; z-index: 1001; }
+        .filter-pill { 
+            display: flex; align-items: center; gap: 6px; 
+            padding: 8px 15px; border: 1px solid #E2E8F0; 
+            border-radius: 12px; font-size: 13px; font-weight: 600; color: #4A5568;
+            cursor: pointer;
+        }
+        
+        #sortMenu {
+            display: none; 
+            position: absolute; 
+            top: 45px; 
+            left: 20px; 
+            background: white; 
+            border: 1px solid #E2E8F0; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            z-index: 2000; 
+            width: 240px;
+        }
+        #sortMenu ul { list-style: none; padding: 8px; }
+        #sortMenu li { padding: 12px 10px; font-size: 14px; cursor: pointer; border-bottom: 1px solid #F1F5F9; display: flex; align-items: center; gap: 10px; }
+        #sortMenu li:hover { background: #F8FAFC; color: #6C94DC; }
+
+        /* Filter Overlay Styles */
+        #filterOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 3000; justify-content: center; align-items: flex-end; }
+        .filter-drawer { width: 100%; max-width: 430px; background: white; border-radius: 30px 30px 0 0; padding: 25px; animation: slideUp 0.3s ease-out; }
+        
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        .filter-group { margin-bottom: 25px; }
+        .filter-group h4 { font-size: 15px; margin-bottom: 12px; color: #4A5568; font-weight: 700; }
+        
+        .chip-container { display: flex; flex-wrap: wrap; gap: 10px; }
+        .filter-chip { 
+            padding: 10px 18px; background: #F1F5F9; border-radius: 12px; 
+            font-size: 13px; font-weight: 600; color: #718096; 
+            cursor: pointer; transition: 0.2s; border: 1px solid transparent; 
+        }
+        .filter-chip.active { background: #EBF4FF; color: #6C94DC; border-color: #6C94DC; }
+
+        .apply-btn { width: 100%; padding: 15px; background: #6C94DC; color: white; border: none; border-radius: 15px; font-weight: 700; font-size: 16px; cursor: pointer; }
+
+        /* Section Headlines */
+        .section-label { 
+            display: flex; justify-content: space-between; padding: 10px 20px; 
+            align-items: center; position: relative; z-index: 100; 
+        }
+        .section-label h3 { font-size: 17px; font-weight: 700; color: #1A202C; }
+        .section-label a { font-size: 12px; color: #6C94DC; text-decoration: none; font-weight: 600; cursor: pointer; padding: 5px; }
+
+        /* Interactive Slider Cards */
+        .swiper { width: 100%; padding: 5px 20px 20px !important; overflow: visible !important; }
+        .event-card { 
+            background: white; border-radius: 25px; overflow: hidden; 
+            border: 1px solid #F1F5F9; box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s ease;
+        }
+        .event-card:hover { transform: scale(1.05); filter: saturate(1.4) contrast(1.1); box-shadow: 0 15px 30px rgba(108, 148, 220, 0.2); }
+
+        .event-img-container { position: relative; height: 160px; overflow: hidden; }
+        .event-img-container img { width: 100%; height: 100%; object-fit: cover; }
+        .badge { position: absolute; top: 12px; right: 12px; background: #6C94DC; color: white; padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; }
+        
+        .card-body { padding: 12px 15px 15px; }
+        .card-body h4 { font-size: 16px; margin-bottom: 2px; color: #2D3748; }
+        .card-body p { font-size: 12px; color: #A0AEC0; margin-bottom: 12px; }
+        
+        .btn-outline { 
+            width: 100%; padding: 10px; border: 1.5px solid #6C94DC; 
+            color: #6C94DC; background: none; border-radius: 15px; 
+            font-weight: 700; font-size: 13px; cursor: pointer;
+        }
+
+        /* Detail Screen Overlay */
+        #eventDetailOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 5000;
+            justify-content: center;
+        }
+
+        .detail-mobile-wrapper {
+            width: 100%;
+            max-width: 430px;
+            background: #fff;
+            height: 100vh;
+            overflow-y: auto;
+            position: relative;
+            padding-bottom: 90px;
+        }
+
+        .detail-hero { position: relative; width: 100%; height: 350px; }
+        .detail-hero img { width: 100%; height: 100%; object-fit: cover; }
+        .close-detail-btn { position: absolute; top: 20px; left: 20px; font-size: 24px; color: #fff; text-shadow: 0 0 5px rgba(0,0,0,0.5); cursor: pointer; }
+        
+        .detail-content { padding: 25px; }
+        .detail-title { font-size: 24px; font-weight: 800; color: #1A202C; margin-bottom: 10px; }
+        .detail-meta { font-size: 14px; color: #4A5568; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+        .detail-description { margin-top: 25px; border-top: 1px solid #EDF2F7; padding-top: 20px; }
+        .detail-description h4 { font-size: 18px; margin-bottom: 12px; color: #1A202C; }
+        .detail-description p { font-size: 14px; line-height: 1.6; color: #718096; }
+
+        .add-btn-fixed { 
+            width: 100%; padding: 15px; margin-top: 20px;
+            background: #6C94DC; color: white; border: none; border-radius: 15px;
+            font-weight: 700; font-size: 16px; cursor: pointer;
+        }
+
+        /* Final Ticket Barcode Overlay */
+        #ticketOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 6000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Past Events Feed */
+        .event-list-item { display: flex; align-items: center; gap: 15px; background: #F8FAFC; padding: 12px; border-radius: 20px; margin: 0 20px 10px; }
+        .thumb { width: 50px; height: 50px; border-radius: 12px; margin-right: 5px; object-fit: cover; }
+        .info { flex: 1; }
+        .info h5 { font-size: 14px; color: #2D3748; }
+        
+        /* Delete Button Styling */
+        .delete-btn { color: #292020; cursor: pointer; font-size: 15px; padding-left: 10px; transition: 0.2s; }
+        .delete-btn:hover { transform: scale(1.2); }
+
+        /* Sticky Footer Navigation Bar */
+        .nav-bar { position: fixed; bottom: 0; width: 100%; max-width: 430px; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #F1F5F9; z-index: 1000; }
+        .nav-link { text-align: center; color: #CBD5E0; text-decoration: none; font-size: 10px; font-weight: 600; cursor: pointer; }
+        .nav-link.active { color: #6C94DC; }
+        .nav-link i { font-size: 22px; display: block; margin-bottom: 4px; }
+
+        /* My Events Page Styles */
+        #myEventsPage { display: none; padding: 20px; }
+    
+                /* My Events Top Tabs */
+        .status-tabs { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 5px; scrollbar-width: none; }
+        .status-pill { padding: 8px 16px; background: #EBF4FF; color: #6C94DC; border-radius: 20px; font-size: 11px; font-weight: 700; white-space: nowrap; cursor: pointer; }
+        .status-pill.active { background: #6C94DC; color: white; }
+
+        /* My Events Büyük Card Designs */
+        .booking-card { background: white; border-radius: 20px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 1px solid #F1F5F9; }
+        .booking-img-wrap { position: relative; height: 160px; }
+        .booking-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        .date-tag { position: absolute; top: 15px; right: 15px; background: #6C94DC; color: white; padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 800; }
+
+        .booking-info { padding: 20px; }
+        .booking-info h3 { font-size: 18px; font-weight: 800; color: #2D3748; margin-bottom: 5px; margin-top: 0; }
+        .booking-info p { font-size: 13px; color: #A0AEC0; margin-bottom: 20px; }
+
+        .action-buttons { display: flex; gap: 10px; }
+        .btn-filled { flex: 1; padding: 12px; background: #6C94DC; color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; }
+        .btn-outlined-act { flex: 1; padding: 12px; background: white; color: #6C94DC; border: 1.5px solid #6C94DC; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; }
+    
+    </style>
+</head>
+<body>
+
+    <div class="mobile-container">
+        <div id="exploreContent">
+            <header class="header">
+                <i class="fa-solid fa-magnifying-glass" style="color: #2D3748;"></i>
+                <div class="logo-area">
+                    <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcT6KsGroKIO9107QKsoB5QwITbG9jXRg-oJX_EB1nD-eIEkmuWA" height="26"> CypLocal
+                </div>
+                <i class="fa-solid fa-bell" style="color: #6C94DC;"></i>
+            </header>
+
+            <div class="categories">
+                <div class="chip" onclick="switchCategory('all')">ALL EVENTS</div>
+                <div class="chip active" id="btn-concerts" onclick="switchCategory('concerts')">CONCERTS</div>
+                <div class="chip" id="btn-theatre" onclick="switchCategory('theatre')">THEATRE</div>
+                <div class="chip" id="btn-sports" onclick="switchCategory('sports')">SPORTS</div>
+                <div class="chip" id="btn-workshop" onclick="switchCategory('workshop')">WORKSHOP</div>            
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-pill" onclick="toggleSortMenu(event)">
+                    <i class="fa-solid fa-arrow-up-down"></i> Sort 
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+
+                <div id="sortMenu">
+                    <ul>
+                        <li onclick="applySort('newest')"><span>✨</span> Newest Added</li>
+                        <li onclick="applySort('oldest')"><span>📅</span> Oldest Added</li>
+                        <li onclick="applySort('past')"><span>⌛</span> Past Events</li>
+                    </ul>
+                </div>
+
+                <div class="filter-pill" onclick="openFilter()">
+                    <i class="fa-solid fa-sliders"></i> Filter 
+                    <span style="background: #6C94DC; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 10px;">2</span>
+                </div>
+            </div>
+
+            <div class="section-label">
+                <h3>Near Famagusta</h3>
+                <a href="/concerts.html">See more</a>
+            </div>
+
+            <div id="pastEventsList" style="display: none; padding-top: 20px;">
+                <h3 style="padding: 0 20px; font-size: 16px; color: #718096;">Past Events (2024)</h3>
+                
+                <div class="event-list-item" style="opacity: 0.6;">
+                    <img src="https://i.scdn.co/image/ab6761610000e5eb72c4711c5a35b7ab4aa5453e" class="thumb" style="filter: grayscale(100%);">
+                    <div class="info">
+                        <h5 style="text-decoration: line-through; color: #718096;">Sena Şener</h5>
+                        <span>Iskele (Ended)</span>
+                    </div>
+                    <div class="delete-btn" style="color: #A0AEC0; font-size: 12px;">Expired</div>
+                </div>
+
+                <div class="event-list-item" style="opacity: 0.6;">
+                    <img src="https://rotka.org/wp-content/uploads/2024/11/Tugkan_.jpg" class="thumb" style="filter: grayscale(100%);">
+                    <div class="info">
+                        <h5 style="text-decoration: line-through; color: #718096;">Tuğkan</h5>
+                        <span>EMU Stadium (Ended)</span>
+                    </div>
+                    <div class="delete-btn" style="color: #A0AEC0; font-size: 12px;">Expired</div>
+                </div>
+            </div>
+
+
+
+
+
+            <div id="concertsSection">
+                
+                <div class="swiper mySwiper">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <div class="event-card" data-venue="Walled City" data-date="2025-12-30">
+                                <div class="event-img-container"><img src="https://i.kocatepegazetesi.com/c/80/1280x720/s/dosya/haber/yildiz-tilbe-kizina-neden-seze-db1cf2.jpg"><div class="badge">DEC 30</div></div>
+                                <div class="card-body">
+                                    <h4>Yıldız Tilbe</h4><p>Famagusta Walled City</p>
+                                    <button class="btn-outline" onclick="openEventDetail('Yıldız Tilbe')">Add to Events</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="event-card" data-venue="Iskele Square" data-date="2026-01-18">
+                                <div class="event-img-container"><img src="https://e2h4j4t3.rocketcdn.me/wp-content/uploads/2024/02/mahmut-orhan-1200.jpg"><div class="badge">JAN 18</div></div>
+                                <div class="card-body">
+                                    <h4>Mahmut Orhan</h4><p>Iskele Square</p>
+                                    <button class="btn-outline" onclick="openEventDetail('Mahmut Orhan')">Add to Events</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="event-card" data-venue="EMU Stadium" data-date="2026-01-26">
+                                <div class="event-img-container"><img src="https://mediacdns.karnaval.com/media/artist_media/224/biography_1280x720/photo_224_1.jpg?v=100521010107"><div class="badge">JAN 26</div></div>
+                                <div class="card-body">
+                                    <h4>Haluk Levent</h4><p>EMU Stadium</p>
+                                    <button class="btn-outline" onclick="openEventDetail('Haluk Levent')">Add to Events</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+
+            <div id="theatreSection" style="display: none; padding: 0 20px;">
+                <div class="section-label"><h3>Popular Plays</h3></div>
+
+                <div class="event-card" data-venue="Famagusta Theatre" data-date="2026-01-15" style="margin-bottom: 20px;">
+                    <div class="event-img-container" style="height: 180px;">
+                        <img src="https://i0.wp.com/tiyatrodergisi.com.tr/wp-content/uploads/2024/03/DSC_7283-1170x780.jpg?resize=696%2C464&ssl=1">
+                        <div class="badge">JAN 15</div>
+                    </div>
+                    <div class="card-body">
+                        <h4>Tartuff24 - Theatre Play</h4>
+                        <p>Famagusta Theatre • Free</p>
+                        <button class="btn-outline" onclick="openEventDetail('Tartuff24')">See Details</button>                    </div>
+                </div>
+
+                <div class="event-card" data-venue="Famagusta Theatre" data-date="2026-01-06" style="margin-bottom: 20px;">
+                    <div class="event-img-container" style="height: 180px;">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSB7suf6eb6aNNl3dWq7DpfUpKWaYnEG1y5uA&s">
+                        <div class="badge">JAN 6</div>
+                    </div>
+                    <div class="card-body" >
+                        <h4>Hamlet Performance</h4>
+                        <p>Famagusta Theatre • Free</p>
+                        <button class="btn-outline" onclick="openEventDetail('Hamlet')">See Details</button>                    </div>
+                </div>
+            </div>
+
+
+
+            <div id="sportsSection" style="display: none; padding: 0 20px;">
+                <div class="section-label"><h3>Upcoming Matches</h3></div>
+
+                <div class="event-card" data-venue="Canbulat Stadium" data-date="2026-02-10" style="margin-bottom: 20px;">
+                    <div class="event-img-container" style="height: 180px;">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuUpOhKzFpMkzFQIMzAkAgoAl8o601-P2gcw&s";>
+                        <div class="badge">FEB 10</div>
+                    </div>
+                    <div class="card-body">
+                        <h4>Mağusa Türk Gücü Match</h4>
+                        <p>Canbulat Stadium • Free</p>
+                        <button class="btn-outline" onclick="openEventDetail('MTG Match')">See Details</button>
+                    </div>
+                </div>
+
+                <div class="event-card" data-venue="Lala Mustafa Paşa Arena" data-date="2026-02-15" style="margin-bottom: 20px;">
+                    <div class="event-img-container" style="height: 180px;">
+                        <img src="https://tribunkibris.com/wp-content/uploads/2024/02/bff8ecd3-ac93-43da-85e2-d37b04f81039-1.jpg";>
+                        <div class="badge">FEB 15</div>
+                    </div>
+                    <div class="card-body">
+                        <h4>Basketball League Final</h4>
+                        <p>Lala Mustafa Paşa Arena • Free</p>
+                        <button class="btn-outline" onclick="openEventDetail('Basketball Final')">See Details</button>
+                    </div>
+                </div>
+
+            </div>
+
+
+        <div id="workshopSection" style="display: none; padding: 0 20px;">
+            <div class="section-label"><h3>Hands-on Ateliers</h3></div>
+
+            <div class="event-card" data-venue="Old Town Studio" data-date="2026-01-24" style="margin-bottom: 20px;">
+                <div class="event-img-container" style="height: 180px;">
+                    <img src="https://images.squarespace-cdn.com/content/v1/59758644e6f2e17330e99104/1690005379728-Z0ZE2T3MHAQG6YNJDNF4/IMG_8337.jpg?format=1500w">
+                    <div class="badge">DAILY 2 PM</div>
+                </div>
+                <div class="card-body">
+                    <h4>Daily Pottery Workshop</h4>
+                    <p>Old Town Studio • Free</p>
+                    <button class="btn-outline" onclick="openWorkshopBooking('Daily Pottery Workshop')">See Details</button>
+                </div>
+            </div>
+
+            <div class="event-card" data-venue="City Gallery" data-date="2026-01-31" style="margin-bottom: 20px;">
+                <div class="event-img-container" style="height: 180px;">
+                    <img src="https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800">
+                    <div class="badge">WEEKLY ON SATURDAY</div>
+                </div>
+                <div class="card-body">
+                    <h4>Modern Art Workshop</h4>
+                    <p>City Gallery • Free</p>
+                    <button class="btn-outline" onclick="openWorkshopBooking('Modern Art Workshop')">See Details</button>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div id="workshopBookingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 999999; justify-content: center; align-items: center;">
+            <div style="width: 90%; max-width: 400px; background: white; border-radius: 25px; overflow: hidden; max-height: 90vh; overflow-y: auto; position: relative;">
+                <div style="position: relative; height: 200px;">
+                    <i class="fa-solid fa-circle-xmark" onclick="closeWorkshopBooking()" style="position: absolute; top: 15px; left: 15px; font-size: 32px; color: white; cursor: pointer; z-index: 100;"></i>
+                    <img id="wsHeroImg" src="" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div style="padding: 20px;">
+                    <h2 id="wsTitle" style="font-weight: 800; font-size: 22px; color: #1a202c;"></h2>
+                    <p style="color: #718096; font-size: 13px; margin-bottom: 20px;">Entry Fee</p>
+                    
+                    <p style="font-weight: 700; margin-bottom: 10px;">Party Size</p>
+                    <div id="partySizeContainer" style="display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto;">
+                        <div class="filter-chip active" onclick="selectWSDetail(this, 'party')">1</div>
+                        <div class="filter-chip" onclick="selectWSDetail(this, 'party')">2</div>
+                        <div class="filter-chip" onclick="selectWSDetail(this, 'party')">3</div>
+                        <div class="filter-chip" onclick="selectWSDetail(this, 'party')">4</div>
+                        <div class="filter-chip" onclick="selectWSDetail(this, 'party')">5</div>
+                        <div class="filter-chip" onclick="selectWSDetail(this, 'party')">6</div>
+                    </div>
+
+                    <div id="wsDateContainer" style="margin-bottom: 20px;">
+                        <div id="standardDates" style="display: flex; flex-direction: column; gap: 10px;">
+                            <button class="btn-outline ws-date-btn" onclick="selectWSDetail(this, 'date')">Today 2 PM</button>
+                            <button class="btn-outline ws-date-btn active" onclick="selectWSDetail(this, 'date')">Tomorrow 2PM</button>
+                        </div>
+                        
+                        <div id="specialDate" style="display: none;">
+                            <button class="btn-outline ws-date-btn active" onclick="selectWSDetail(this, 'date')">Every Saturday (10:00 AM)</button>
+                        </div>
+                    </div>
+                    <textarea id="wsNotes" placeholder="Any Requests?" style="width: 100%; height: 80px; border-radius: 12px; border: 1px solid #E2E8F0; padding: 12px; margin-top: 10px; font-family: inherit; outline: none; resize: none;"></textarea>
+                    <button class="add-btn-fixed" onclick="confirmWSReservation()" style="background: #6C94DC; position: static; width: 100%; margin-top: 20px;">CONFIRM RESERVATION</button>
+                </div>
+            </div>
+        </div>
+
+            <div class="section-label">
+                <h3>My Events</h3>
+            </div>
+            
+            <div id="inlineMyEvents">
+                <p id="inlineEmptyState" style="text-align: center; color: #A0AEC0; padding: 20px; font-size: 13px;">
+                    No events added yet.
+                </p>
+            </div>
+
+            <div class="section-label">
+                <h3>Don't miss these events</h3>
+                <a href="#">See more</a>
+            </div>
+            <div class="swiper mySwiper" style="padding: 0 20px 20px !important;">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <div class="event-card" style="height: 140px; border-radius: 20px; overflow: hidden;">
+                            <img src="https://kultur.istanbul/gorsel/2021/10/mahmut-orhan-3.jpg" style="width: 100%; height: 100%; object-fit: cover;">
+                            <div class="badge" style="background: #6C94DC; top: 10px; right: 10px;">JAN 18</div>
+                        </div>
+                    </div>
+
+
+                    <div class="swiper-slide">
+                        <div class="event-card" style="height: 140px; border-radius: 20px; overflow: hidden;">
+                            <img src="https://www.theoldglobe.org/link/454ee4ccf32f4e809e439f0780d26085.aspx" style="width: 100%; height: 100%; object-fit: cover; filter: hue-rotate(45deg);">
+                            <div class="badge" style="background: #6C94DC; top: 10px; right: 10px;">JAN 6</div>
+                        </div>
+                    </div>
+
+
+                    <div class="swiper-slide">
+                        <div class="event-card" style="height: 140px; border-radius: 20px; overflow: hidden;">
+                            <img src="https://etkinlife.com/wp-content/uploads/2025/04/Yildiz-Tilbe-Konser-Takvimi.jpg" style="width: 100%; height: 100%; object-fit: cover; filter: hue-rotate(45deg);">
+                            <div class="badge" style="background: #6C94DC; top: 10px; right: 10px;">DEC 30</div>
+                        </div>
+                    </div>
+
+                    <div class="swiper-slide">
+                        <div class="event-card" style="height: 140px; border-radius: 20px; overflow: hidden;">
+                            <img src="https://kibrisinsesicom.teimg.com/kibrisinsesi-com/uploads/2024/02/tartuff-foto-3.jpg" style="width: 100%; height: 100%; object-fit: cover; filter: hue-rotate(45deg);">
+                            <div class="badge" style="background: #6C94DC; top: 10px; right: 10px;">JAN 15</div>
+                        </div>
+                    </div>
+
+                    
+                    
+                    
+                    <div class="swiper-slide">
+                        <div class="event-card" style="height: 140px; border-radius: 20px; overflow: hidden;">
+                            <img src="https://cdn.bubilet.com.tr/cdn-cgi/image/format=auto,width=3840,quality=80/https://cdn.bubilet.com.tr/files/Etkinlik/haluk-levent-30-yil-konseri-14551.jpg" style="width: 100%; height: 100%; object-fit: cover; filter: hue-rotate(45deg);">
+                            <div class="badge" style="background: #6C94DC; top: 10px; right: 10px;">JAN 26</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+        <div id="myEventsPage">
+            <header class="header">
+                <i class="fa-solid fa-magnifying-glass" style="color: #2D3748;"></i>
+                <div class="logo-area"><img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcT6KsGroKIO9107QKsoB5QwITbG9jXRg-oJX_EB1nD-eIEkmuWA" height="26"> CypLocal</div>
+                <i class="fa-solid fa-bell" style="color: #6C94DC;"></i>
+            </header>
+
+            <div class="status-tabs">
+                <div class="status-pill" onclick="filterEvents('all')">ALL EVENTS</div>
+                <div class="status-pill active" onclick="filterEvents('upcoming')" id="tab-upcoming">UPCOMING</div>
+                <div class="status-pill" onclick="filterEvents('completed')" id="tab-completed">COMPLETED</div>
+                <div class="status-pill" onclick="filterEvents('cancelled')" id="tab-cancelled">CANCELLED</div>            </div>
+
+            <div id="upcomingListContainer">
+                <div id="bigCardList" style="padding: 0 20px;">
+                    <p id="noEventsMessage" style="text-align: center; color: #A0AEC0; margin-top: 50px;">
+                        No upcoming events.<br>Go to Explore to add.
+                    </p>
+                </div>
+            </div>
+
+            <div id="completedListContainer" style="display: none; padding: 0 20px;">
+                <div class="booking-card" style="opacity: 0.8;">
+                    <div class="booking-img-wrap">
+                        <img src="https://mediacdns.karnaval.com/media/artist_media/14758/biography_1280x720/photo_14758_0.jpg?v=290917032425" style="filter: grayscale(100%);">
+                        <div class="date-tag" style="background:#A0AEC0;">ENDED</div>
+                    </div>
+                    <div class="booking-info">
+                        <h3 style="color:#718096;">Sena Şener</h3>
+                        <p>Iskele (Oct 12, 2024)</p>
+                        <div class="action-buttons">
+                            <button class="btn-outlined-act" style="width:100%; border-color:#CBD5E0; color:#A0AEC0; cursor:default;">Event Ended</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="booking-card" style="opacity: 0.8;">
+                    <div class="booking-img-wrap">
+                        <img src="https://images.genius.com/70361c0953fea0b7859f5391360eb668.400x400x1.jpg" style="filter: grayscale(100%);">
+                        <div class="date-tag" style="background:#A0AEC0;">ENDED</div>
+                    </div>
+                    <div class="booking-info">
+                        <h3 style="color:#718096;">Tuğkan</h3>
+                        <p>EMU Stadium (Sep 12, 2024)</p>
+                        <div class="action-buttons">
+                            <button class="btn-outlined-act" style="width:100%; border-color:#CBD5E0; color:#A0AEC0; cursor:default;">Event Ended</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="completedListContainer" style="display: none; padding: 0 20px;">
+                
+                <div class="booking-card" style="opacity: 0.8;">
+                    <div class="booking-img-wrap">
+                        <img src="https://i.scdn.co/image/ab6761610000e5eb72c4711c5a35b7ab4aa5453e" style="filter: grayscale(100%);">
+                        <div class="date-tag" style="background:#A0AEC0;">ENDED</div>
+                    </div>
+                    <div class="booking-info">
+                        <h3 style="color:#718096;">Sena Şener</h3>
+                        <p>Iskele (Oct 12, 2024)</p>
+                        <div class="action-buttons">
+                            <button class="btn-outlined-act" style="width:100%; border-color:#CBD5E0; color:#A0AEC0; cursor:default;">Event Ended</button>
+                        </div>
+                    </div>
+                </div>
+ 
+
+                <div id="cancelledListContainer" style="display: none; padding: 0 20px;">
+                <p id="noCancelledMessage" style="text-align: center; color: #A0AEC0; margin-top: 50px;">
+                    No cancelled events.
+                </p>
+            </div>
+
+
+                <div class="booking-card" style="opacity: 0.8;">
+                    <div class="booking-img-wrap">
+                        <img src="https://rotka.org/wp-content/uploads/2024/11/Tugkan_.jpg" style="filter: grayscale(100%);">
+                        <div class="date-tag" style="background:#A0AEC0;">ENDED</div>
+                    </div>
+                    <div class="booking-info">
+                        <h3 style="color:#718096;">Tuğkan</h3>
+                        <p>EMU Stadium (Sep 12, 2024)</p>
+                        <div class="action-buttons">
+                            <button class="btn-outlined-act" style="width:100%; border-color:#CBD5E0; color:#A0AEC0; cursor:default;">Event Ended</button>
+                    </div>
+                </div>
+            </div>
+        </div> 
+
+
+
+
+<div id="profilePage" style="display: none; background: white; width: 100%; min-height: 100vh;">
+            <header class="header">
+                <div class="logo-area">
+                    <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcT6KsGroKIO9107QKsoB5QwITbG9jXRg-oJX_EB1nD-eIEkmuWA" height="26"> CypLocal
+                </div>
+                <i class="fa-solid fa-bell" style="color: #6C94DC;"></i>
+            </header>
+
+            <div class="profile-container" style="padding: 20px; text-align: center;">
+                <div style="margin-bottom: 30px;">
+                    <div style="position: relative; display: inline-block;">
+                        <img src="https://i.pravatar.cc/150?u=alexreed" style="width: 110px; height: 110px; border-radius: 50%; border: 4px solid #EBF4FF; object-fit: cover;">
+                        <div style="position: absolute; bottom: 5px; right: 5px; background: #6C94DC; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white;">
+                            <i class="fa-solid fa-pen" style="font-size: 12px;"></i>
+                        </div>
+                    </div>
+                    <h2 style="margin-top: 15px; font-weight: 800; color: #1A202C;">Alex Reed</h2>
+                    <button class="btn-outlined-act" style="width: auto; padding: 6px 25px; border-radius: 20px; font-size: 12px; margin-top: 10px;">Edit Profile</button>
+                </div>
+
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div style="font-weight: 800; color: #6C94DC; font-size: 20px;">11</div>
+                        <div style="font-size: 10px; color: #A0AEC0; font-weight: 700;">FOLLOWED</div>
+                    </div>
+                    <div style="width: 1px; height: 30px; background: #E2E8F0;"></div>
+                    <div class="stat-item">
+                        <div style="font-weight: 800; color: #6C94DC; font-size: 20px;">4</div>
+                        <div style="font-size: 10px; color: #A0AEC0; font-weight: 700;">BOOKMARKS</div>
+                    </div>
+                    <div style="width: 1px; height: 30px; background: #E2E8F0;"></div>
+                    <div class="stat-item">
+                        <div style="font-weight: 800; color: #6C94DC; font-size: 20px;">3</div>
+                        <div style="font-size: 10px; color: #A0AEC0; font-weight: 700;">UPCOMING</div>
+                    </div>
+                </div>
+
+                <div class="profile-menu">
+                    <div class="menu-group primary">
+                        <div class="menu-item"><i class="fa-solid fa-gear"></i> Settings</div>
+                        <div class="menu-item"><i class="fa-solid fa-circle-user"></i> Account Details</div>
+                    </div>
+
+                    <div class="menu-group secondary">
+                        <div class="menu-item"><i class="fa-solid fa-shield-halved"></i> Privacy and Safety</div>
+                        <div class="menu-item"><i class="fa-solid fa-circle-info"></i> Help and About</div>
+                    </div>
+
+                    <button onclick="location.reload()" class="logout-btn">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                    </button>
+                </div>
+            </div>
+
+
+                </div> 
+            </div> <nav class="nav-bar">
+        <a id="navExplore" class="nav-link active" onclick="switchTab('explore')"><i class="fa-solid fa-compass"></i>Explore</a>
+        <a id="navMyEvents" class="nav-link" onclick="switchTab('myEvents')"><i class="fa-solid fa-heart"></i>My Events</a>
+        <a id="navProfile" class="nav-link" onclick="switchTab('profile')"><i class="fa-solid fa-user"></i>Profile</a>         
+    </nav>
+
+
+
+    <div id="eventDetailOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 999999; justify-content: center; align-items: center;">
+        <div style="width: 90%; max-width: 400px; background: white; border-radius: 30px; overflow-y: auto; position: relative; max-height: 90vh; box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
+            
+            <div class="detail-hero" style="position: relative; height: 250px;">
+                <i class="fa-solid fa-circle-xmark" onclick="closeEventDetail()" 
+                style="position: absolute; top: 20px; left: 20px; font-size: 32px; color: white; cursor: pointer; z-index: 100; text-shadow: 0 2px 10px rgba(0,0,0,0.3);"></i>
+                <img id="detailHeroImg" src="" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            
+            <div class="detail-content" style="padding: 25px;">
+                <h1 id="detailArtistName" style="font-size: 24px; font-weight: 800; color: #1A202C; margin-bottom: 10px;"></h1>
+                <p style="color: #6C94DC; font-weight: 700; font-size: 14px; margin-bottom: 20px;">Hosted Free by Municipality</p>
+                
+                <div class="detail-meta" style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; color: #4A5568; font-size: 14px;">
+                    <i class="fa-regular fa-calendar" style="color: #6C94DC; width: 20px;"></i>
+                    <span id="detailDateText"></span>
+                </div>
+                
+                <div class="detail-meta" style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; color: #4A5568; font-size: 14px;">
+                    <i class="fa-solid fa-location-dot" style="color: #6C94DC; width: 20px;"></i>
+                    <span id="detailLocationText"></span>
+                </div>
+
+                <div class="detail-description" style="border-top: 1px solid #F1F5F9; padding-top: 20px; margin-top: 10px;">
+                    <h4 style="font-size: 16px; margin-bottom: 10px; color: #1A202C; font-weight: 700;">About Event</h4>
+                    <p id="detailAboutText" style="font-size: 14px; line-height: 1.6; color: #718096;"></p>
+                </div>
+                
+                <button class="add-btn-fixed" onclick="confirmAddEvent()" 
+                        style="background: #6C94DC; position: static; width: 100%; margin-top: 30px; border-radius: 18px; padding: 16px; font-weight: 800; border: none; color: white; cursor: pointer;">
+                    ADD TO MY EVENTS
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="ticketOverlay">
+        <div class="mobile-container" style="background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;">
+            <div style="background: #6C94DC; width: 90%; border-radius: 25px; padding: 30px; position: relative; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+                <i class="fa-solid fa-xmark" onclick="closeTicket()" style="position: absolute; top: 20px; right: 20px; color: white; font-size: 20px; cursor: pointer;"></i>
+                <div style="background: white; border-radius: 20px; padding: 20px; margin-bottom: 25px; display: inline-block;">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=CypLocalEvent" alt="QR Code" style="width: 180px; height: 180px;">
+                </div>
+                <button style="width: 100%; padding: 15px; background: white; color: #6C94DC; border: none; border-radius: 15px; font-weight: 800; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <i class="fa-solid fa-download"></i> Save Barcode
+                </button>
+            </div>
+            <p style="color: white; margin-top: 30px; font-weight: 600; cursor: pointer;" onclick="closeTicket()">Finish & View My Events</p>
+        </div>
+    </div>
+
+    <div id="filterOverlay">
+        <div class="filter-drawer">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="font-size: 20px; font-weight: 800; color: #2D3748;">Filters</h2>
+                <i class="fa-solid fa-xmark" onclick="closeFilter()" style="font-size: 22px; cursor: pointer; color: #A0AEC0;"></i>
+            </div>
+            <div class="filter-group">
+                <h4>Venue (Famagusta Area)</h4>
+                <div class="chip-container">
+                    <div class="filter-chip" onclick="this.classList.toggle('active')">EMU Stadium</div>
+                    <div class="filter-chip" onclick="this.classList.toggle('active')">Walled City</div>
+                    <div class="filter-chip" onclick="this.classList.toggle('active')">Famagusta Theatre</div>
+                    <div class="filter-chip" onclick="this.classList.toggle('active')">Canbulat Stadium</div>
+                    <div class="filter-chip" onclick="this.classList.toggle('active')">Lala Mustafa Paşa Arena</div>
+                    <div class="filter-chip" onclick="this.classList.toggle('active')">Old Town Studio</div>
+                    <div class="filter-chip" onclick="this.classList.toggle('active')">City Gallery </div>
+
+                </div>
+            </div>
+            <button class="apply-btn" onclick="applyFilters()">Show Free Results</button>
+            <p onclick="closeFilter()" style="text-align: center; color: #6C94DC; font-weight: 600; margin-top: 15px; font-size: 14px; cursor: pointer;">Clear All</p>
+        </div>
+    </div>
+
+    <div id="profilePage" style="display: none; width: 100%; min-height: 100vh;">
+        <header class="header">
+            <div class="logo-area">
+                <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcT6KsGroKIO9107QKsoB5QwITbG9jXRg-oJX_EB1nD-eIEkmuWA" height="26"> CypLocal
+            </div>
+            <i class="fa-solid fa-bell" style="color: #6C94DC;"></i>
+        </header>
+
+        <div class="profile-container" style="padding: 20px; text-align: center;">
+            <div style="margin-bottom: 30px;">
+                <div style="position: relative; display: inline-block;">
+                    <img src="https://i.pravatar.cc/150?u=alexreed" 
+                        style="width: 110px; height: 110px; border-radius: 50%; border: 4px solid #EBF4FF; object-fit: cover;">
+                    <div style="position: absolute; bottom: 5px; right: 5px; background: #6C94DC; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white;">
+                        <i class="fa-solid fa-pen" style="font-size: 12px;"></i>
+                    </div>
+                </div>
+                <h2 style="margin-top: 15px; font-weight: 800; color: #1A202C;">Alex Reed</h2>
+                <button class="btn-outlined-act" style="width: auto; padding: 6px 25px; border-radius: 20px; font-size: 12px; margin-top: 10px;">Edit Profile</button>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div style="font-weight: 800; color: #6C94DC; font-size: 20px;">11</div>
+                    <div style="font-size: 10px; color: #A0AEC0; font-weight: 700; text-transform: uppercase;">Followed</div>
+                </div>
+                <div style="width: 1px; height: 30px; background: #E2E8F0;"></div>
+                <div class="stat-item">
+                    <div style="font-weight: 800; color: #6C94DC; font-size: 20px;">4</div>
+                    <div style="font-size: 10px; color: #A0AEC0; font-weight: 700; text-transform: uppercase;">Bookmarks</div>
+                </div>
+                <div style="width: 1px; height: 30px; background: #E2E8F0;"></div>
+                <div class="stat-item">
+                    <div style="font-weight: 800; color: #6C94DC; font-size: 20px;">3</div>
+                    <div style="font-size: 10px; color: #A0AEC0; font-weight: 700; text-transform: uppercase;">Upcoming</div>
+                </div>
+            </div>
+
+            <div class="profile-menu">
+                <div class="menu-group primary">
+                    <div class="menu-item">
+                        <i class="fa-solid fa-gear"></i> <span>Settings</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-circle-user"></i> <span>Account Details</span>
+                    </div>
+                </div>
+
+                <div class="menu-group secondary">
+                    <div class="menu-item">
+                        <i class="fa-solid fa-shield-halved"></i> <span>Privacy and Safety</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-circle-info"></i> <span>Help and About</span>
+                    </div>
+                </div>
+
+                <button onclick="location.reload()" class="logout-btn">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        let swiper = new Swiper(".mySwiper", {
+            slidesPerView: 1.25, spaceBetween: 15, grabCursor: true, observer: true, observeParents: true
+        });
+
+const artistDatabase = {
+            'Yıldız Tilbe': {
+                img: 'https://radyoarabesk.com.tr/wp-content/uploads/2024/08/Yildiz-Tilbe.jpg',
+                date: 'Tuesday, 30 Dec 2025 • 22:00 PM',
+                location: 'Famagusta Walled City, Famagusta',
+                about: 'Yıldız Tilbe is one of the most unique and beloved voices in Turkish pop music.'
+            },
+            'Mahmut Orhan': {
+                img: 'https://img.gazetemerhaba.com/rcman/Cw1280h720q95gc/storage/files/images/2025/08/11/bir-baslik-ekleyin-2025-08-11t151-dyng-8lup.jpg',
+                date: 'Sunday, 18 Jan 2026 • 21:00 PM',
+                location: 'Iskele Square, Iskele',
+                about: 'World-renowned DJ Mahmut Orhan brings his electronic beats to Iskele.'
+            },
+            'Haluk Levent': {
+                img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlUb6Vpoa-dj30d_WgKnftlyst_ZVI1cTPkg&s',
+                date: 'Monday, 26 Jan 2026 • 20:00 PM',
+                location: 'EMU Stadium, Famagusta',
+                about: 'Haluk Levent, the voice of Turkish rock, performs for the local community.'
+            },
+            'Tartuff24': {
+                img: 'https://www.kibrispostasi.com/imagecache/newsimage/news/v/v2/v2tartf24_1725881601.jpg',
+                date: 'Thursday, 15 Jan 2026 • 19:30 PM',
+                location: 'Famagusta Theatre, Famagusta',
+                about: 'Tartuff24 is a modern adaptation of Moliere’s immortal work. This comedy, built on loyalty and hypocrisy, will make you laugh out loud.'
+            },
+            'Hamlet': {
+                img: 'https://b6s54eznn8xq.merlincdn.net/Uploads/Films/hamlet-alternaif-202412301544308d355198cec342a3b7075475784306c1.png',
+                date: 'Tuesday, 06 Jan 2026 • 20:00 PM',
+                location: 'Famagusta Theatre, Famagusta',
+                about: "Shakespeare's masterpiece Hamlet brings revenge, conscience and existential anguish to the stage. An unforgettable performance."
+            },
+            'MTG Match': {
+                type: 'sports',
+                img: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800',
+                date: 'Tuesday, 10 Feb 2026 • 19:00 PM',
+                location: 'Canbulat Stadium, Famagusta',
+                about: 'Experience the local passion of the biggest football derby in Famagusta. Mağusa Türk Gücü takes the stage!'
+            },
+            'Basketball Final': {
+                type: 'sports',
+                img: 'https://images.unsplash.com/photo-1504450758481-7338eba7524a?w=800',
+                date: 'Sunday, 15 Feb 2026 • 18:00 PM',
+                location: 'Lala Mustafa Paşa Sports Complex',
+                about: 'The final match of the season. A thrilling atmosphere and competitive sportsmanship await you.'
+            },
+            'MTG Match': {
+                type: 'sports',
+                img: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800',
+                date: 'Tuesday, 10 Feb 2026 • 19:00 PM',
+                location: 'Canbulat Stadium, Famagusta',
+                about: 'Experience the local passion of the biggest football derby in Famagusta.'
+            },
+            'Basketball Final': {
+                type: 'sports',
+                img: 'https://images.unsplash.com/photo-1504450758481-7338eba7524a?w=800',
+                date: 'Sunday, 15 Feb 2026 • 18:00 PM',
+                location: 'Lala Mustafa Paşa Complex',
+                about: 'The final showdown of the season with an incredible atmosphere.'
+            },
+            'Daily Pottery Workshop': {
+                img: 'https://cdn.yuup.co/image/7644/file/large-93db3deb5a3f0e7f528459477a435809.jpg',
+                location: 'Old Town Studio • Daily 14:00 PM',
+                about: 'Learn the art of pottery in our daily hands-on sessions.'
+            },
+            'Modern Art Workshop': {
+                img: 'https://www.shutterstock.com/image-photo/hands-palette-paintbrush-art-above-600nw-2467961517.jpg',
+                location: 'City Gallery • Every Saturday 10:00 AM',
+                about: 'Explore your creativity with our Modern Art Workshop. All materials (canvas, paints, brushes) are provided by the gallery.'
+            }
+        };
+        let currentlyAdding = null;
+
+        function openEventDetail(name) {
+            const data = artistDatabase[name];
+            if(!data) return;
+            currentlyAdding = { name, ...data };
+            document.getElementById('detailHeroImg').src = data.img;
+            document.getElementById('detailArtistName').innerText = name + ' Concert';
+            document.getElementById('detailDateText').innerText = data.date;
+            document.getElementById('detailLocationText').innerText = data.location;
+            document.getElementById('detailAboutText').innerText = data.about;
+            document.getElementById('eventDetailOverlay').style.display = 'flex';
+        }
+
+        function closeEventDetail() { document.getElementById('eventDetailOverlay').style.display = 'none'; }
+        
+        function confirmAddEvent() {
+            if(!currentlyAdding) return;
+            const eventId = 'ev-' + Date.now();
+            
+            // Hide idle status messages
+            const inlineEmpty = document.getElementById('inlineEmptyState');
+            const emptyLabel = document.getElementById('emptyState');
+            if(inlineEmpty) inlineEmpty.style.display = 'none';
+            if(emptyLabel) emptyLabel.style.display = 'none';
+
+            // 1. CREATE A SMALL LIST FOR THE HOME PAGE (Your Events Section)
+            const eventHTML = `
+                <div class="event-list-item" id="${eventId}">
+                    <div style="display: flex; align-items: center; flex: 1; cursor: pointer;" onclick="openTicketOnly()">
+                        <img src="${currentlyAdding.img}" class="thumb">
+                        <div class="info">
+                            <h5>${currentlyAdding.name}</h5>
+                            <span>${currentlyAdding.location}</span>
+                        </div>
+                    </div>
+                    <div class="delete-btn" onclick="removeEvent('${eventId}', event)">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </div>
+                </div>
+            `;
+            // Add to the list on the main page
+            document.getElementById('inlineMyEvents').insertAdjacentHTML('afterbegin', eventHTML);
+
+            // 2. CREATE A LARGE CARD FOR MY EVENTS PAGE (NEWLY ADDED SECTION)
+            // We split the date and convert it to the "DEC 30" format
+            const dateParts = currentlyAdding.date.split(' '); 
+            const shortDate = (dateParts[2] + ' ' + dateParts[1]).toUpperCase(); // Örn: DEC 30
+
+            const bigCardHTML = `
+                <div class="booking-card" id="card-${eventId}">
+                    <div class="booking-img-wrap">
+                        <img src="${currentlyAdding.img}">
+                        <div class="date-tag">${shortDate}</div>
+                    </div>
+                    <div class="booking-info">
+                        <h3>${currentlyAdding.name}</h3>
+                        <p>${currentlyAdding.location}</p>
+                        <div class="action-buttons">
+                            <button class="btn-filled" onclick="openTicketOnly()">See Details</button>
+                            <button class="btn-outlined-act" onclick="this.closest('.booking-card').remove(); document.getElementById('${eventId}').remove();">Remove Event</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            // If there is a "No events" message, hide it
+            const msg = document.getElementById('noEventsMessage');
+            if (msg) msg.style.display = 'none';
+            
+            // Add to the large card list on my Events page
+            const bigList = document.getElementById('bigCardList');
+            if(bigList) {
+                bigList.insertAdjacentHTML('afterbegin', bigCardHTML);
+            }
+
+            closeEventDetail();
+            document.getElementById('ticketOverlay').style.display = 'flex';
+        }
+        // === BU KOD, TIKLANAN KARTI KOPYALAR VE CANCELLED'A TAŞIR ===
+        function removeEvent(id, e) {
+            e.stopPropagation();
+
+            if(!confirm("Cancel this event? It will move to Cancelled tab.")) return;
+
+            // 1. Tıklanan butondan yola çıkarak kartı bul (ID ile uğraşmaz, direkt elementi bulur)
+            let clickedEl = e.target.closest('.event-list-item'); // Ana sayfa kartı mı?
+            if (!clickedEl) clickedEl = e.target.closest('.booking-card'); // Yoksa My Events kartı mı?
+
+            // Eğer kart bulunduysa verilerini çek
+            if (clickedEl) {
+                // Resim, Başlık ve Konum bilgilerini o anki karttan al
+                const imgEl = clickedEl.querySelector('img');
+                const titleEl = clickedEl.querySelector('h3, h4, h5'); // Hangisi varsa onu alır
+                const locEl = clickedEl.querySelector('p, span'); // Hangisi varsa onu alır
+
+                // Verileri garantiye al (Hata vermemesi için boşsa boş metin ata)
+                const imgSrc = imgEl ? imgEl.src : ''; 
+                const title = titleEl ? titleEl.innerText : 'Unknown Event';
+                const loc = locEl ? locEl.innerText : '';
+
+                // 2. Cancelled Kutusunu Bul ve İçine Ekle
+                const cList = document.getElementById('cancelledListContainer');
+                
+                if (cList) {
+                    // Yeni HTML'i oluştur
+                    const cancelledHTML = `
+                        <div class="booking-card" style="opacity: 0.7; margin-bottom: 15px; background:white; border-radius:20px; overflow:hidden; border:1px solid #eee;">
+                            <div class="booking-img-wrap" style="position:relative; height:160px;">
+                                <img src="${imgSrc}" style="width:100%; height:100%; object-fit:cover; filter: grayscale(100%);">
+                                <div class="date-tag" style="background:#E53E3E; position:absolute; top:15px; right:15px; color:white; padding:6px 12px; border-radius:10px; font-weight:800; font-size:11px;">CANCELLED</div>
+                            </div>
+                            <div class="booking-info" style="padding:20px;">
+                                <h3 style="color:#718096; font-size:18px; font-weight:800; margin:0 0 5px;">${title}</h3>
+                                <p style="color:#A0AEC0; font-size:13px; margin-bottom:15px;">${loc}</p>
+                                <button style="width:100%; padding:10px; border:1px solid #E53E3E; color:#E53E3E; background:white; border-radius:12px; font-weight:700;">Reservation Cancelled</button>
+                            </div>
+                        </div>`;
+                    
+                    // "No Cancelled Events" yazısını gizle
+                    const msg = document.getElementById('noCancelledMessage');
+                    if(msg) msg.style.display = 'none';
+
+                    // Listeye ekle
+                    cList.insertAdjacentHTML('afterbegin', cancelledHTML);
+                } else {
+                    alert("HATA: Cancelled listesi (id='cancelledListContainer') sayfada bulunamadı!");
+                }
+
+                // 3. Tıklanan kartı sil
+                clickedEl.remove();
+
+                // 4. Varsa diğer sayfadaki kopyasını da bul ve sil
+                // (ID temizliği yaparak diğer kopyayı bulmaya çalışır)
+                const cleanId = id.replace('small-', '').replace('big-', '').replace('card-', '');
+                const possibleIds = ['small-'+cleanId, 'big-'+cleanId, 'card-'+cleanId, cleanId];
+                
+                possibleIds.forEach(pid => {
+                    const otherCard = document.getElementById(pid);
+                    if(otherCard && otherCard !== clickedEl) otherCard.remove();
+                });
+
+                // 5. Listeler boşaldıysa "Boş" mesajlarını geri getir
+                const smallList = document.getElementById('inlineMyEvents');
+                if (smallList && smallList.querySelectorAll('.event-list-item').length === 0) {
+                    const m = document.getElementById('emptyMsgSmall') || document.getElementById('inlineEmptyState');
+                    if(m) m.style.display = 'block';
+                }
+            }
+        }
+
+
+        function openTicketOnly() { document.getElementById('ticketOverlay').style.display = 'flex'; }
+        
+        function closeTicket() { 
+            // 1. Close the QR screen
+            document.getElementById('ticketOverlay').style.display = 'none'; 
+            
+            // 2. Go to the My Events tab (the page with the heart icon)
+            switchTab('myEvents'); 
+            
+            // 3. Scroll to the top of the page
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+
+
+
+
+
+
+        function switchTab(tab) {
+            // Tüm ana içerik alanlarını bir diziye al
+            const sections = ['exploreContent', 'myEventsPage', 'profilePage'];
+            const navs = ['navExplore', 'navMyEvents', 'navProfile'];
+
+            sections.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none'; // Hepsini gizle
+            });
+
+            navs.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.remove('active'); // Aktiflikleri kaldır
+            });
+
+            // Tıklananı göster
+            const targetSection = document.getElementById(tab === 'explore' ? 'exploreContent' : tab + 'Page');
+            const targetNav = document.getElementById('nav' + tab.charAt(0).toUpperCase() + tab.slice(1));
+
+            if (targetSection) targetSection.style.display = 'block';
+            if (targetNav) targetNav.classList.add('active');
+
+            window.scrollTo(0, 0); // Sayfayı en üste çek
+        }
+
+
+
+
+
+
+
+
+
+        function toggleSortMenu(e) { e.stopPropagation(); const m = document.getElementById('sortMenu'); m.style.display = m.style.display === 'none' ? 'block' : 'none'; }
+        document.addEventListener('click', () => { if(document.getElementById('sortMenu')) document.getElementById('sortMenu').style.display = 'none'; });
+
+        function openFilter() { document.getElementById('filterOverlay').style.display = 'flex'; }
+        function closeFilter() { document.getElementById('filterOverlay').style.display = 'none'; }
+        function applyFilters() { closeFilter(); }
+
+        async function applySort(type) {
+            const wrapper = document.querySelector('.swiper-wrapper');
+            const pastEventsDiv = document.getElementById('pastEventsList'); // HTML'deki geçmiş etkinlikler div'i
+            const concertsSection = document.getElementById('concertsSection');
+
+            document.getElementById('sortMenu').style.display = 'none';
+
+            if (type === 'past') {
+                // 1. Gelecek etkinliklerini (slider) gizle
+                if(concertsSection) concertsSection.style.display = 'none';
+                // 2. Geçmiş etkinlikler listesini göster
+                if(pastEventsDiv) pastEventsDiv.style.display = 'block';
+            } else {
+                // Normal sıralama moduna geri dön
+                if(pastEventsDiv) pastEventsDiv.style.display = 'none';
+                if(concertsSection) concertsSection.style.display = 'block';
+
+                const slides = Array.from(wrapper.querySelectorAll('.swiper-slide'));
+                slides.sort((a, b) => {
+                    const dateA = new Date(a.querySelector('.event-card').getAttribute('data-date'));
+                    const dateB = new Date(b.querySelector('.event-card').getAttribute('data-date'));
+                    return type === 'newest' ? dateB - dateA : dateA - dateB;
+                });
+
+                wrapper.innerHTML = '';
+                slides.forEach(slide => wrapper.appendChild(slide));
+                swiper.update();
+                swiper.slideTo(0);
+            }
+        }
+
+    // --- GÜNCEL VE TAM FONKSİYON (BUNU KULLAN) ---
+        function filterEvents(type) {
+            // 1. Önce tüm butonların mavi rengini kaldır
+            document.querySelectorAll('.status-pill').forEach(pill => {
+                pill.classList.remove('active');
+            });
+
+            // 2. Listeleri tanımla
+            const upcomingList = document.getElementById('upcomingListContainer');
+            const completedList = document.getElementById('completedListContainer');
+            const cancelledList = document.getElementById('cancelledListContainer');
+
+            // 3. Önce tüm listeleri gizle (Temiz başlangıç)
+            if(upcomingList) upcomingList.style.display = 'none';
+            if(completedList) completedList.style.display = 'none';
+            if(cancelledList) cancelledList.style.display = 'none';
+
+            // 4. Hangi butona tıklandıysa onu aç
+            if (type === 'completed') {
+                // Completed'ı aç
+                const btn = document.getElementById('tab-completed');
+                if(btn) btn.classList.add('active');
+                if(completedList) completedList.style.display = 'block';
+
+            } else if (type === 'cancelled') {
+                // Cancelled'ı aç
+                const btn = document.getElementById('tab-cancelled');
+                if(btn) btn.classList.add('active');
+                if(cancelledList) cancelledList.style.display = 'block';
+
+            } else {
+                // Varsayılan olarak Upcoming'i aç
+                const btn = document.getElementById('tab-upcoming');
+                if(btn) btn.classList.add('active');
+                if(upcomingList) upcomingList.style.display = 'block';
+            }
+        }
+
+
+
+       function switchCategory(cat) {
+            // 1. Önce tüm butonlardaki mavi rengi temizle
+            const allChips = document.querySelectorAll('.chip');
+            allChips.forEach(chip => {
+                chip.classList.remove('active');
+            });
+
+            // 2. Tıklanan butona mavi rengi ekle
+            // HTML tarafında ID'lerin btn-concerts, btn-theatre, btn-sports ve btn-workshop olduğundan emin ol
+            const activeBtn = document.getElementById('btn-' + cat);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+
+            // 3. Bölüm tanımlamaları
+            const concertsSec = document.getElementById('concertsSection');
+            const theatreSec = document.getElementById('theatreSection');
+            const sportsSec = document.getElementById('sportsSection');
+            const workshopSec = document.getElementById('workshopSection');
+            const homeBottom = document.getElementById('homeBottomSection');
+
+            // 4. Sayfa İçeriklerini Gizle/Göster
+            if (cat === 'concerts') {
+                if(concertsSec) concertsSec.style.display = 'block';
+                if(homeBottom) homeBottom.style.display = 'block';
+                if(theatreSec) theatreSec.style.display = 'none';
+                if(sportsSec) sportsSec.style.display = 'none';
+                if(workshopSec) workshopSec.style.display = 'none';
+            } 
+            else if (cat === 'theatre') {
+                if(concertsSec) concertsSec.style.display = 'none';
+                if(homeBottom) homeBottom.style.display = 'none';
+                if(theatreSec) theatreSec.style.display = 'block';
+                if(sportsSec) sportsSec.style.display = 'none';
+                if(workshopSec) workshopSec.style.display = 'none';
+            }
+            else if (cat === 'sports') {
+                if(concertsSec) concertsSec.style.display = 'none';
+                if(homeBottom) homeBottom.style.display = 'none';
+                if(theatreSec) theatreSec.style.display = 'none';
+                if(sportsSec) sportsSec.style.display = 'block';
+                if(workshopSec) workshopSec.style.display = 'none';
+            }
+            else if (cat === 'workshop') {
+                if(concertsSec) concertsSec.style.display = 'none';
+                if(homeBottom) homeBottom.style.display = 'none';
+                if(theatreSec) theatreSec.style.display = 'none';
+                if(sportsSec) sportsSec.style.display = 'none';
+                if(workshopSec) workshopSec.style.display = 'block';
+            }
+        }
+
+
+
+
+        let currentWSSelection = {
+            title: '',
+            partySize: '1',
+            date: 'Tomorrow',
+            img: ''
+        };
+
+        function openWorkshopBooking(title) {
+            const data = artistDatabase[title];
+            if(!data) return;
+            
+            currentWSSelection.title = title;
+            currentWSSelection.img = data.img;
+            
+            document.getElementById('wsTitle').innerText = title;
+            document.getElementById('wsHeroImg').src = data.img;
+
+            // Buton gruplarını çekiyoruz
+            const standardDiv = document.getElementById('standardDates');
+            const specialDiv = document.getElementById('specialDate');
+
+            if (standardDiv && specialDiv) {
+                if (title === 'Modern Art Workshop') {
+                    // Sadece Cumartesi'yi göster
+                    standardDiv.style.display = 'none';
+                    specialDiv.style.display = 'block';
+                    currentWSSelection.date = "Saturday"; 
+                } else {
+                    // Normal takvimi göster
+                    standardDiv.style.display = 'flex';
+                    specialDiv.style.display = 'none';
+                    currentWSSelection.date = "Tomorrow";
+                }
+            }
+
+            document.getElementById('workshopBookingOverlay').style.display = 'flex';
+        }
+        function closeWorkshopBooking() {
+            document.getElementById('workshopBookingOverlay').style.display = 'none';
+        }
+
+        function selectWSDetail(el, type) {
+            const parent = el.parentElement;
+            parent.querySelectorAll(type === 'party' ? '.filter-chip' : '.ws-date-btn').forEach(item => {
+                item.classList.remove('active');
+                if(type === 'date') {
+                    item.style.background = '#fff';
+                    item.style.color = '#6C94DC';
+                }
+            });
+            
+            el.classList.add('active');
+            if(type === 'party') {
+                currentWSSelection.partySize = el.innerText;
+            } else {
+                currentWSSelection.date = el.innerText;
+                el.style.background = '#EBF4FF';
+            }
+        }
+
+        function confirmWSReservation() {
+            const eventId = 'ws-' + Date.now();
+            const notes = document.getElementById('wsNotes').value;
+            
+            // 1. Ana Sayfa "My Events" (Küçük liste)
+            const wsSmallHTML = `
+                <div class="event-list-item" id="${eventId}">
+                    <div style="display: flex; align-items: center; flex: 1; cursor: pointer;" onclick="openTicketOnly()">
+                        <img src="${currentWSSelection.img}" class="thumb">
+                        <div class="info">
+                            <h5>${currentWSSelection.title}</h5>
+                            <span style="color: #6C94DC; font-weight: 700;">${currentWSSelection.partySize} Person • ${currentWSSelection.date}</span>
+                        </div>
+                    </div>
+                    <div class="delete-btn" onclick="removeEvent('${eventId}', event)">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </div>
+                </div>`;
+            document.getElementById('inlineMyEvents').insertAdjacentHTML('afterbegin', wsSmallHTML);
+
+            // 2. My Events Sayfası (Büyük kart)
+            const wsBigCardHTML = `
+                <div class="booking-card" id="card-${eventId}">
+                    <div class="booking-img-wrap">
+                        <img src="${currentWSSelection.img}">
+                        <div class="date-tag">${currentWSSelection.date.toUpperCase()}</div>
+                    </div>
+                    <div class="booking-info">
+                        <h3>${currentWSSelection.title}</h3>
+                        <p><strong>Party Size:</strong> ${currentWSSelection.partySize} People<br><strong>Notes:</strong> ${notes || 'None'}</p>
+                        <div class="action-buttons">
+                            <button class="btn-filled" onclick="openTicketOnly()">View Ticket</button>
+                            <button class="btn-outlined-act" onclick="removeEvent('${eventId}', event)">Cancel</button>
+                        </div>
+                    </div>
+                </div>`;
+            
+            const bigList = document.getElementById('bigCardList');
+            if(bigList) {
+                const msg = document.getElementById('noEventsMessage');
+                if(msg) msg.style.display = 'none';
+                bigList.insertAdjacentHTML('afterbegin', wsBigCardHTML);
+            }
+
+            // Ekranı kapat ve QR kodu göster
+            closeWorkshopBooking();
+            document.getElementById('ticketOverlay').style.display = 'flex';
+        }
+ 
+        
+        
+    </script>
+</body>
+</html>

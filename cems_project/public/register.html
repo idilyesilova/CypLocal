@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CypLocal - Register</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
+    <style>
+        /* Some additions to ensure compatibility between the library's design and our own design */
+        .iti { width: 100%; display: block; }
+        .iti__flag-container { border-radius: 15px 0 0 15px; }
+        /* To preserve input style */
+        .iti input { 
+            width: 100% !important; 
+            padding-left: 52px !important; 
+            margin: 0 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="login-card">
+            
+            <div class="header-section">
+                <div class="logo-wrapper">
+                    <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcT6KsGroKIO9107QKsoB5QwITbG9jXRg-oJX_EB1nD-eIEkmuWA" class="app-logo">
+                    <h1 class="app-title">CypLocal</h1>
+                </div>
+            </div>
+
+            <h2 class="form-title">Create an account</h2>
+            <p class="welcome-msg">Start enjoying events with friends!</p>
+            
+            <div class="input-field">
+                <label>Email Address</label>
+                <input type="email" placeholder="Enter your email">
+            </div>
+
+            <div class="input-field">
+                <label>Phone Number</label>
+                <input type="tel" id="phone">
+            </div>
+
+            <div class="input-field">
+                <label>Password</label>
+                <div class="pass-input-container">
+                    <input type="password" placeholder="Enter your password">
+                    <img src="https://cdn-icons-png.flaticon.com/512/709/709612.png" class="eye-toggle">
+                </div>
+            </div>
+
+            <div class="login-meta">
+                <label class="custom-checkbox">
+                    <input type="checkbox" checked>
+                    <span class="checkmark"></span>
+                    Remember Me
+                </label>
+                <a href="#" class="forgot-btn">Forgot Password</a>
+            </div>
+            
+            <button class="main-login-btn">Sign Up</button>
+            
+            <p class="register-link">Already have an account? <a href="index.html">Login</a></p>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <script>
+      const phoneInputField = document.querySelector("#phone");
+      const phoneInput = window.intlTelInput(phoneInputField, {
+        // Displays Turkey and Cyprus at the top
+        preferredCountries: ["tr", "cy"], 
+        // For number formatting and automatic country recognition
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+      });
+    </script>
+</body>
+</html>

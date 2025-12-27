@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CypLocal - All Concerts</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background: #FFFFFF; display: flex; justify-content: center; }
+        .mobile-container { width: 100%; max-width: 430px; min-height: 100vh; position: relative; padding-bottom: 90px; }
+        
+        /* Header */
+        .header { display: flex; align-items: center; padding: 15px 20px; gap: 15px; }
+        .back-btn { font-size: 20px; cursor: pointer; color: #4A5568; }
+        .page-title { font-weight: 800; font-size: 22px; color: #4A5568; }
+
+        /* Sort Section */
+        .filter-section { padding: 10px 20px; position: relative; z-index: 1000; }
+        .sort-pill { display: flex; align-items: center; gap: 8px; width: fit-content; padding: 10px 18px; border: 1px solid #E2E8F0; border-radius: 12px; font-weight: 600; cursor: pointer; }
+        
+        #sortMenu { display: none; position: absolute; top: 55px; left: 20px; background: white; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 2000; width: 220px; border: 1px solid #E2E8F0; }
+        #sortMenu ul { list-style: none; padding: 8px; }
+        #sortMenu li { padding: 12px; font-size: 14px; cursor: pointer; border-bottom: 1px solid #F1F5F9; }
+        #sortMenu li:last-child { border-bottom: none; }
+
+        /* Concert List Layout */
+        .concert-list { padding: 10px 20px; }
+        .concert-card { display: flex; align-items: center; gap: 15px; background: #F8FAFC; padding: 15px; border-radius: 20px; margin-bottom: 15px; border: 1px solid #F1F5F9; transition: transform 0.2s; }
+        .concert-card:hover { transform: scale(1.02); filter: saturate(1.2); }
+        .concert-img { width: 70px; height: 70px; border-radius: 15px; object-fit: cover; }
+        .concert-info { flex: 1; }
+        .concert-info h4 { font-size: 16px; color: #2D3748; margin-bottom: 3px; }
+        .concert-info p { font-size: 12px; color: #A0AEC0; }
+        .date-badge { background: #6C94DC; color: white; padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 800; white-space: nowrap; }
+        
+        /* Style for Past Events Badge */
+        .past-badge { background: #A0AEC0; }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <div class="header">
+            <i class="fa-solid fa-chevron-left back-btn" onclick="history.back()"></i>
+            <span class="page-title">All Concerts</span>
+        </div>
+
+        <div class="filter-section">
+            <div class="sort-pill" onclick="toggleSort(event)">
+                <i class="fa-solid fa-arrow-up-down"></i> Sort by Date <i class="fa-solid fa-chevron-down"></i>
+            </div>
+            <div id="sortMenu">
+                <ul>
+                    <li onclick="applyConcertSort('newest')">✨ Newest Added</li>
+                    <li onclick="applyConcertSort('oldest')">📅 Oldest Added</li>
+                    <li onclick="applyConcertSort('past')">⌛ Past Concerts</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="concert-list" id="concertContainer">
+            <div class="concert-card" data-date="2025-12-30">
+                <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=200" class="concert-img">
+                <div class="concert-info">
+                    <h4>Yıldız Tilbe</h4>
+                    <p>Famagusta Walled City</p>
+                </div>
+                <div class="date-badge">DEC 30</div>
+            </div>
+
+            <div class="concert-card" data-date="2026-01-18">
+                <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=200" class="concert-img">
+                <div class="concert-info">
+                    <h4>Mahmut Orhan</h4>
+                    <p>Iskele Square</p>
+                </div>
+                <div class="date-badge">JAN 18</div>
+            </div>
+
+            <div class="concert-card" data-date="2026-01-26">
+                <img src="https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=200" class="concert-img">
+                <div class="concert-info">
+                    <h4>Haluk Levent</h4>
+                    <p>EMU Stadium</p>
+                </div>
+                <div class="date-badge">JAN 26</div>
+            </div>
+
+            <div class="concert-card" data-date="2025-10-12">
+                <img src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=100" class="concert-img">
+                <div class="concert-info">
+                    <h4>Sena Şener</h4>
+                    <p>Iskele</p>
+                </div>
+                <div class="date-badge past-badge">OCT 12 (Past)</div>
+            </div>
+
+            <div class="concert-card" data-date="2025-09-12">
+                <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=100" class="thumb concert-img">
+                <div class="concert-info">
+                    <h4>Tuğkan</h4>
+                    <p>EMU Stadium</p>
+                </div>
+                <div class="date-badge past-badge">SEP 12 (Past)</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSort(e) {
+            e.stopPropagation();
+            const menu = document.getElementById('sortMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        document.addEventListener('click', () => {
+            const menu = document.getElementById('sortMenu');
+            if (menu) menu.style.display = 'none';
+        });
+
+        /**
+         * Enhanced Sort and Filter Function
+         */
+        function applyConcertSort(type) {
+            const container = document.getElementById('concertContainer');
+            const cards = Array.from(container.getElementsByClassName('concert-card'));
+            const today = new Date();
+            
+            // Step 1: Filter visibility
+            cards.forEach(card => {
+                const eventDate = new Date(card.getAttribute('data-date'));
+                
+                if (type === 'past') {
+                    // Only show events before today
+                    card.style.display = (eventDate < today) ? 'flex' : 'none';
+                } else {
+                    // Only show future/today events for 'newest' or 'oldest'
+                    card.style.display = (eventDate >= today) ? 'flex' : 'none';
+                }
+            });
+
+            // Step 2: Sorting logic
+            cards.sort((a, b) => {
+                const dateA = new Date(a.getAttribute('data-date'));
+                const dateB = new Date(b.getAttribute('data-date'));
+
+                if (type === 'newest') return dateB - dateA; 
+                if (type === 'oldest') return dateA - dateB; 
+                if (type === 'past') return dateB - dateA;   
+                return 0;
+            });
+
+            // Step 3: Update DOM
+            container.innerHTML = '';
+            cards.forEach(card => container.appendChild(card));
+        }
+
+        // Initialize view on load (Show Upcoming by default)
+        window.onload = () => applyConcertSort('oldest');
+    </script>
+</body>
+</html>

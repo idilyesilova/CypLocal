@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CypLocal - Login</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="logo-wrapper">
+            <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcT6KsGroKIO9107QKsoB5QwITbG9jXRg-oJX_EB1nD-eIEkmuWA" class="app-logo">
+            <h1 class="app-title">CypLocal</h1>
+        </div>
+
+        <div class="login-card">
+            <h2 class="form-title">Login</h2>
+            <p class="welcome-msg">Hello again!</p>
+            
+            <div class="input-field">
+                <label>Email Address</label>
+                <input type="email" id="login-email" placeholder="name@gmail.com">
+            </div>
+
+            <div class="input-field">
+                <label>Password</label>
+                <div class="pass-input-container">
+                    <input type="password" id="login-password" placeholder="Enter your password">
+                    <i class="fa-regular fa-eye eye-toggle" id="toggleLoginPassword"></i>
+                </div>
+            </div>
+
+            <div class="login-meta">
+                <label class="custom-checkbox">
+                    <input type="checkbox" id="rememberMe" checked>
+                    <span>Remember Me</span>
+                </label>
+                <a href="/forgot-password.html" class="forgot-btn">Forgot Password</a>
+            </div>
+
+            <button class="main-login-btn" onclick="handleLogin()">Login</button>
+            
+            <div class="divider-section">
+                <span class="line"></span><span class="divider-text">Or With</span><span class="line"></span>
+            </div>
+
+            <button class="social-login" onclick="window.location.href='/auth/google'">
+                <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png">
+                Continue with Google
+            </button>
+
+            <button class="social-login" onclick="alert('Apple Login coming soon!')">
+                <i class="fa-brands fa-apple"></i>
+                Continue with Apple
+            </button>
+            
+            <p class="register-link">Don't have an account? <a href="/signup.html">Sign up</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Şifre Göster/Gizle
+        document.getElementById('toggleLoginPassword').onclick = function() {
+            const pw = document.getElementById('login-password');
+            pw.type = pw.type === 'password' ? 'text' : 'password';
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        };
+
+        async function handleLogin() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+                if (res.ok) window.location.href = data.redirect;
+                else alert(data.message);
+            } catch (err) { alert("Server error."); }
+        }
+    </script>
+</body>
+</html>

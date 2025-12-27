@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CypLocal - Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* === TEMEL AYARLAR (My Events ile Birebir Aynı) === */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background: #FFFFFF; display: flex; justify-content: center; min-height: 100vh; }
+        
+        .mobile-container {
+            width: 100%; max-width: 430px; background: #F8F9FB; min-height: 100vh;
+            position: relative; padding-bottom: 90px; overflow-x: hidden;
+        }
+
+        /* === HEADER === */
+        .header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 15px 20px; background: white; 
+        }
+        .logo-area { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 24px; color: #4A5568; }
+
+        /* === PROFİL ÜST ALAN === */
+        .profile-hero {
+            background: white;
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid #F1F5F9;
+        }
+        .avatar-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        .avatar-img {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 4px solid #EBF4FF;
+            object-fit: cover;
+        }
+        .edit-badge {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: #6C94DC;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+            font-size: 12px;
+        }
+
+        /* === İSTATİSTİKLER (Status Tabs Stilinde) === */
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+            background: #F8F9FB;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-weight: 800;
+            color: #6C94DC;
+            font-size: 20px;
+        }
+        .stat-label {
+            font-size: 10px;
+            color: #A0AEC0;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        /* === MENÜ LİSTESİ (Booking Card Stilinde) === */
+        .menu-list {
+            padding: 0 20px;
+        }
+        .menu-item {
+            background: white;
+            border-radius: 20px;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            border: 1px solid #F1F5F9;
+            cursor: pointer;
+        }
+        .menu-item i {
+            color: #6C94DC;
+            font-size: 18px;
+            width: 25px;
+        }
+        .menu-item span {
+            font-weight: 700;
+            color: #2D3748;
+            font-size: 14px;
+            flex: 1;
+        }
+        .menu-item .fa-chevron-right {
+            color: #CBD5E0;
+            font-size: 12px;
+        }
+
+        /* === LOGOUT BUTONU === */
+        .btn-logout {
+            margin: 20px;
+            padding: 16px;
+            background: #FFF5F5;
+            color: #E53E3E;
+            border: none;
+            border-radius: 15px;
+            font-weight: 800;
+            font-size: 14px;
+            cursor: pointer;
+            width: calc(100% - 40px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* === ALT MENÜ === */
+        .nav-bar { 
+            position: fixed; bottom: 0; width: 100%; max-width: 430px; 
+            background: white; display: flex; justify-content: space-around; 
+            padding: 15px 0; border-top: 1px solid #F1F5F9; z-index: 1000; 
+        }
+        .nav-link { 
+            text-align: center; color: #CBD5E0; text-decoration: none; 
+            font-size: 10px; font-weight: 600; cursor: pointer; 
+        }
+        .nav-link.active { color: #6C94DC; }
+        .nav-link i { font-size: 22px; display: block; margin-bottom: 4px; }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-container">
+        <header class="header">
+            <i class="fa-solid fa-magnifying-glass" style="color: #2D3748; font-size: 20px;"></i>
+            <div class="logo-area">
+                <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcT6KsGroKIO9107QKsoB5QwITbG9jXRg-oJX_EB1nD-eIEkmuWA" height="26"> CypLocal
+            </div>
+            <i class="fa-solid fa-bell" style="color: #6C94DC; font-size: 20px;"></i>
+        </header>
+
+        <div class="profile-hero">
+            <div class="avatar-wrapper">
+                <img src="https://i.pravatar.cc/150?u=alexreed" class="avatar-img">
+                <div class="edit-badge"><i class="fa-solid fa-camera"></i></div>
+            </div>
+            <h2 style="font-weight: 800; color: #2D3748;">Alex Reed</h2>
+            <p style="color: #A0AEC0; font-size: 13px; margin-top: 4px;">alex.reed@cyplocal.com</p>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-value">11</div>
+                <div class="stat-label">Followed</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">4</div>
+                <div class="stat-label">Bookmarks</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">3</div>
+                <div class="stat-label">Upcoming</div>
+            </div>
+        </div>
+
+        <div class="menu-list">
+            <div class="menu-item">
+                <i class="fa-solid fa-user-gear"></i>
+                <span>Account Settings</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </div>
+            <div class="menu-item">
+                <i class="fa-solid fa-bell"></i>
+                <span>Notifications</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </div>
+            <div class="menu-item">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Privacy & Safety</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </div>
+            <div class="menu-item">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>Help & Support</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </div>
+        </div>
+
+        <button class="btn-logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </button>
+
+        <nav class="nav-bar">
+            <a href="home.html" class="nav-link">
+                <i class="fa-solid fa-compass"></i>Explore
+            </a>
+            <a href="myevents.html" class="nav-link">
+                <i class="fa-solid fa-heart"></i>My Events
+            </a>
+            <a href="#" class="nav-link active">
+                <i class="fa-solid fa-user"></i>Profile
+            </a>
+        </nav>
+    </div>
+
+</body>
+</html>

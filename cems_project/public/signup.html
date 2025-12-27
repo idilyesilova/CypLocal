@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CypLocal - Sign Up</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="logo-wrapper">
+            <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcT6KsGroKIO9107QKsoB5QwITbG9jXRg-oJX_EB1nD-eIEkmuWA" class="app-logo">
+            <h1 class="app-title">CypLocal</h1>
+        </div>
+
+        <div class="login-card">
+            <h2 class="form-title">Create an account</h2>
+            <p class="welcome-msg">Start enjoying events with friends!</p>
+            
+            <div class="input-field">
+                <label>Email Address</label>
+                <input type="email" id="sign-email" placeholder="name@gmail.com">
+            </div>
+
+            <div class="input-field">
+                <label>Phone Number</label>
+                <input type="tel" id="sign-phone">
+            </div>
+
+            <div class="input-field">
+                <label>Password</label>
+                <div class="pass-input-container">
+                    <input type="password" id="sign-password" placeholder="Enter your password">
+                    <i class="fa-regular fa-eye eye-toggle" id="togglePassword"></i>
+                </div>
+            </div>
+
+            <button class="main-login-btn" onclick="handleSignUp()">Sign Up</button>
+            <p class="register-link">Already have an account? <a href="/index.html">Login</a></p>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <script>
+        // Tüm ülkeleri içeren telefon seçicisi (Kıbrıs ve Türkiye öncelikli)
+        const iti = window.intlTelInput(document.querySelector("#sign-phone"), {
+            preferredCountries: ["cy", "tr"],
+            separateDialCode: true,
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+
+        document.getElementById('togglePassword').onclick = function() {
+            const passInput = document.getElementById('sign-password');
+            passInput.type = passInput.type === 'password' ? 'text' : 'password';
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        };
+
+        async function handleSignUp() {
+            const email = document.getElementById('sign-email').value;
+            const phone = iti.getNumber();
+            const password = document.getElementById('sign-password').value;
+
+            if (!email || !phone || !password) return alert("Please fill in all fields.");
+
+            try {
+                const res = await fetch('/api/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, phone, password })
+                });
+                const data = await res.json();
+                alert(data.message);
+                if (res.ok) window.location.href = "/index.html";
+            } catch (err) { alert("Server error."); }
+        }
+    </script>
+</body>
+</html>
